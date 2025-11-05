@@ -6,8 +6,6 @@ import {
   Zap,
   Download,
   Github,
-  Twitter,
-  FileText,
   Layers,
   Rocket,
   MessageSquare,
@@ -186,8 +184,10 @@ const App = () => {
             {[
               { icon: Download, text: 'Download for Windows', primary: true },
             ].map((btn, i) => (
-              <motion.button
+              <motion.a
                 key={i}
+                href='/exe/ai-gen.exe'
+                download
                 variants={fadeInUp}
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
@@ -197,11 +197,11 @@ const App = () => {
                     : i === 1
                     ? 'bg-gray-800 hover:bg-gray-700 border border-gray-700'
                     : 'bg-transparent hover:bg-gray-800 border border-gray-700'
-                } text-white px-8 py-4 rounded-lg font-semibold flex items-center gap-2 transition-all`}
+                } text-white px-8 py-4 rounded-lg font-semibold flex items-center gap-2 transition-all cursor-pointer`}
               >
                 <btn.icon className='w-5 h-5' />
                 {btn.text}
-              </motion.button>
+              </motion.a>
             ))}
           </motion.div>
 
@@ -515,16 +515,18 @@ const App = () => {
             viewport={{ once: true }}
           >
             {['Windows'].map((platform) => (
-              <motion.button
+              <motion.a
                 key={platform}
+                href='/exe/ai-gen.exe'
+                download
                 variants={scaleIn as Variants}
                 whileHover={{ scale: 1.05, y: -3 }}
                 whileTap={{ scale: 0.95 }}
-                className='bg-white text-gray-900 px-8 py-4 rounded-lg font-semibold flex items-center gap-2 transition-all shadow-lg'
+                className='bg-white text-gray-900 px-8 py-4 rounded-lg font-semibold flex items-center gap-2 transition-all shadow-lg cursor-pointer'
               >
                 <Download className='w-5 h-5' />
-                {platform} (v1.0.0)
-              </motion.button>
+                {platform} (v1.2.0)
+              </motion.a>
             ))}
           </motion.div>
 
@@ -562,22 +564,16 @@ const App = () => {
         viewport={{ once: true }}
       >
         <div className='max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-4'>
-          <div className='text-gray-400'>
-            AI-Gen — Built with{' '}
-            <motion.span
-              className='text-red-400'
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 1, repeat: Infinity }}
-            >
-              ❤️
-            </motion.span>{' '}
-            by Your Name
-          </div>
+          <div className='text-gray-400'>AI-Gen — Built by Aneesh</div>
           <div className='flex items-center gap-6'>
             {[
-              { icon: Github, text: 'GitHub', url: 'https://github.com' },
-              { icon: Twitter, text: 'Twitter', url: 'https://twitter.com' },
-              { icon: FileText, text: 'Docs', url: '#' },
+              {
+                icon: Github,
+                text: 'GitHub',
+                url: 'https://github.com/aneeshsharma72067',
+              },
+              // { icon: Twitter, text: 'Twitter', url: 'https://twitter.com' },
+              // { icon: FileText, text: 'Docs', url: '#' },
             ].map((link, i) => (
               <motion.a
                 key={link.text}
