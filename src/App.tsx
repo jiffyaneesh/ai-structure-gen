@@ -133,7 +133,7 @@ const App = () => {
                 key={item}
                 href={
                   item === 'GitHub'
-                    ? 'https://github.com'
+                    ? 'https://github.com/aneeshsharma72067'
                     : `#${item.toLowerCase()}`
                 }
                 className='text-gray-400 hover:text-gray-100 transition-colors text-sm flex items-center gap-2'
