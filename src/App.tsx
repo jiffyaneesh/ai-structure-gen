@@ -10,6 +10,7 @@ import {
   Rocket,
   MessageSquare,
 } from 'lucide-react';
+import { WindowsIcon, AppleIcon } from './assets/Icons';
 
 const App = () => {
   const [typedText, setTypedText] = useState('');
@@ -182,11 +183,22 @@ const App = () => {
             animate='visible'
           >
             {[
-              { icon: Download, text: 'Download for Windows', primary: true },
+              {
+                icon: WindowsIcon,
+                text: 'Download for Windows',
+                primary: true,
+                href: '/exe/ai-gen.exe',
+              },
+              {
+                icon: AppleIcon,
+                text: 'Download for MacOS',
+                primary: true,
+                href: '/exe/ai-gen',
+              },
             ].map((btn, i) => (
               <motion.a
                 key={i}
-                href='/exe/ai-gen.exe'
+                href={btn.href}
                 download
                 variants={fadeInUp}
                 whileHover={{ scale: 1.05, y: -2 }}
@@ -375,7 +387,7 @@ const App = () => {
             >
               {item.comingSoon && (
                 <span className='absolute top-4 right-4 inline-flex items-center px-2 py-1 text-xs font-medium rounded-full bg-indigo-600 text-white shadow-sm'>
-                  Coming soon
+                  Coming soon on Linux
                 </span>
               )}
               <motion.div
@@ -514,7 +526,7 @@ const App = () => {
             whileInView='visible'
             viewport={{ once: true }}
           >
-            {['Windows'].map((platform) => (
+            {['Windows', 'MacOS'].map((platform) => (
               <motion.a
                 key={platform}
                 href='/exe/ai-gen.exe'
@@ -525,7 +537,7 @@ const App = () => {
                 className='bg-white text-gray-900 px-8 py-4 rounded-lg font-semibold flex items-center gap-2 transition-all shadow-lg cursor-pointer'
               >
                 <Download className='w-5 h-5' />
-                {platform} (v1.2.0)
+                {platform} (v1.0.0)
               </motion.a>
             ))}
           </motion.div>
