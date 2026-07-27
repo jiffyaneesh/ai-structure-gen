@@ -1,644 +1,340 @@
-import React, { useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, type Variants } from 'motion/react';
+import { motion } from 'motion/react'
 import {
   Terminal,
-  Sparkles,
-  Zap,
-  Download,
+  GitBranch,
+  ShieldCheck,
+  Boxes,
+  Eye,
+  PlayCircle,
   Github,
-  Layers,
-  Rocket,
-  MessageSquare,
-} from 'lucide-react';
-import { WindowsIcon, AppleIcon } from './assets/Icons';
+  Zap,
+  RefreshCw,
+} from 'lucide-react'
 
-const App = () => {
-  const [typedText, setTypedText] = useState('');
-  const [showOutput, setShowOutput] = useState(false);
-  const fullCommand =
-    'ai-gen ai-generate "A React App with authentication and dashboard"';
-  const { scrollYProgress } = useScroll();
-  const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0.3]);
+const GITHUB = 'https://github.com/aneeshdev/blueprint'
 
-  useEffect(() => {
-    let i = 0;
-    const typingInterval = setInterval(() => {
-      if (i < fullCommand.length) {
-        setTypedText(fullCommand.slice(0, i + 1));
-        i++;
-      } else {
-        clearInterval(typingInterval);
-        setTimeout(() => setShowOutput(true), 500);
-      }
-    }, 50);
+/* ---------- small building blocks ---------- */
 
-    return () => clearInterval(typingInterval);
-  }, []);
-
-  const outputLines = [
-    '✓ Analyzing project requirements...',
-    '✓ Generating folder structure...',
-    '✓ Creating /src/components',
-    '✓ Creating /src/pages/Dashboard',
-    '✓ Creating /src/auth',
-    '✓ Setting up configuration files',
-    '✨ Project structure created successfully!',
-  ];
-
-  // Animation variants
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0 },
-  };
-
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-      },
-    },
-  };
-
-  const scaleIn = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        type: 'spring',
-        stiffness: 100,
-        damping: 15,
-      },
-    },
-  };
-
+function Chip({ children }: { children: React.ReactNode }) {
   return (
-    <div className='min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-gray-100 overflow-hidden'>
-      {/* Animated background gradient */}
-      <div className='fixed inset-0 overflow-hidden pointer-events-none'>
-        <motion.div
-          className='absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-indigo-500/10 to-purple-600/10 rounded-full blur-3xl'
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
-        <motion.div
-          className='absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-blue-500/10 to-cyan-600/10 rounded-full blur-3xl'
-          animate={{
-            scale: [1.2, 1, 1.2],
-            opacity: [0.5, 0.3, 0.5],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: 'easeInOut',
-            delay: 1,
-          }}
-        />
-      </div>
-
-      {/* Navigation */}
-      <motion.nav
-        className='relative z-10 border-b border-gray-800/50 backdrop-blur-sm'
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ type: 'spring', stiffness: 100, damping: 20 }}
-      >
-        <div className='max-w-7xl mx-auto px-6 py-4 flex items-center justify-between'>
-          <motion.div
-            className='flex items-center gap-2'
-            whileHover={{ scale: 1.05 }}
-            transition={{ type: 'spring', stiffness: 400 }}
-          >
-            <motion.div
-              animate={{ rotate: [0, 10, -10, 0] }}
-              transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-            >
-              <Sparkles className='w-6 h-6 text-indigo-400' />
-            </motion.div>
-            <span className='text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent'>
-              AI-Gen
-            </span>
-          </motion.div>
-          <div className='flex items-center gap-6'>
-            {['Features', 'Demo', 'GitHub'].map((item, i) => (
-              <motion.a
-                key={item}
-                href={
-                  item === 'GitHub'
-                    ? 'https://github.com/aneeshsharma72067'
-                    : `#${item.toLowerCase()}`
-                }
-                className='text-gray-400 hover:text-gray-100 transition-colors text-sm flex items-center gap-2'
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 * i }}
-                whileHover={{ scale: 1.1 }}
-              >
-                {item === 'GitHub' && <Github className='w-4 h-4' />}
-                {item}
-              </motion.a>
-            ))}
-          </div>
-        </div>
-      </motion.nav>
-
-      {/* Hero Section */}
-      <section className='relative z-10 max-w-7xl mx-auto px-6 pt-20 md:pb-10'>
-        <motion.div className='text-center mb-12' style={{ opacity }}>
-          <motion.h1
-            className='text-4xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent leading-tight'
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
-          >
-            Generate entire project
-            <br />
-            structures with a single command
-          </motion.h1>
-
-          <motion.p
-            className='text-xl text-gray-400 max-w-3xl mx-auto mb-10'
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            AI-Gen lets you instantly scaffold complete, production-ready folder
-            structures — just describe your project in plain English.
-          </motion.p>
-
-          {/* CTA Buttons */}
-          <motion.div
-            className='flex flex-wrap items-center justify-center gap-4 mb-16'
-            variants={staggerContainer}
-            initial='hidden'
-            animate='visible'
-          >
-            {[
-              {
-                icon: WindowsIcon,
-                text: 'Download for Windows',
-                primary: true,
-                href: '/exe/ai-gen.exe',
-              },
-              {
-                icon: AppleIcon,
-                text: 'Download for MacOS',
-                primary: true,
-                href: '/exe/ai-gen',
-              },
-            ].map((btn, i) => (
-              <motion.a
-                key={i}
-                href={btn.href}
-                download
-                variants={fadeInUp}
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                className={`${
-                  btn.primary
-                    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-lg shadow-indigo-500/25'
-                    : i === 1
-                    ? 'bg-gray-800 hover:bg-gray-700 border border-gray-700'
-                    : 'bg-transparent hover:bg-gray-800 border border-gray-700'
-                } text-white px-8 py-4 rounded-lg font-semibold flex items-center gap-2 transition-all cursor-pointer`}
-              >
-                <btn.icon className='w-5 h-5' />
-                {btn.text}
-              </motion.a>
-            ))}
-          </motion.div>
-
-          {/* Terminal Mockup */}
-          <motion.div
-            className='max-w-4xl mx-auto relative'
-            initial={{ opacity: 0, y: 50, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-          >
-            <motion.div
-              className='absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl blur-xl opacity-20'
-              animate={{
-                scale: [1, 1.05, 1],
-                opacity: [0.2, 0.3, 0.2],
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: 'easeInOut',
-              }}
-            />
-            <motion.div
-              className='relative bg-gray-900/80 backdrop-blur-xl border border-gray-800 rounded-2xl shadow-2xl overflow-hidden'
-              whileHover={{ scale: 1.02 }}
-              transition={{ type: 'spring', stiffness: 300 }}
-            >
-              {/* Terminal Header */}
-              <div className='bg-gray-800/50 px-4 py-3 flex items-center gap-2 border-b border-gray-700/50'>
-                <motion.div
-                  className='w-3 h-3 rounded-full bg-red-500'
-                  whileHover={{ scale: 1.3 }}
-                />
-                <motion.div
-                  className='w-3 h-3 rounded-full bg-yellow-500'
-                  whileHover={{ scale: 1.3 }}
-                />
-                <motion.div
-                  className='w-3 h-3 rounded-full bg-green-500'
-                  whileHover={{ scale: 1.3 }}
-                />
-                <span className='ml-4 text-gray-400 text-sm'>terminal</span>
-              </div>
-
-              {/* Terminal Content */}
-              <div className='p-6 font-mono text-sm'>
-                <div className='flex items-start gap-2'>
-                  <span className='text-green-400'>$</span>
-                  <span className='text-gray-100'>{typedText}</span>
-                  <motion.span
-                    className='w-2 h-5 bg-indigo-400'
-                    animate={{ opacity: [1, 0] }}
-                    transition={{ duration: 0.8, repeat: Infinity }}
-                  />
-                </div>
-
-                {showOutput && (
-                  <motion.div
-                    className='mt-4 space-y-2'
-                    variants={staggerContainer}
-                    initial='hidden'
-                    animate='visible'
-                  >
-                    {outputLines.map((line, i) => (
-                      <motion.div
-                        key={i}
-                        className='text-gray-400'
-                        variants={fadeInUp}
-                      >
-                        {line}
-                      </motion.div>
-                    ))}
-                  </motion.div>
-                )}
-              </div>
-            </motion.div>
-          </motion.div>
-        </motion.div>
-      </section>
-
-      {/* How It Works */}
-      <Section title='How It Works'>
-        <motion.div
-          className='grid md:grid-cols-3 gap-8'
-          variants={staggerContainer}
-          initial='hidden'
-          whileInView='visible'
-          viewport={{ once: true, margin: '-100px' }}
-        >
-          {[
-            {
-              icon: MessageSquare,
-              title: 'Describe your project',
-              desc: 'Tell AI-Gen what you want to build in plain English. No complex configurations needed.',
-              gradient: 'from-indigo-500 to-purple-600',
-            },
-            {
-              icon: Zap,
-              title: 'AI-Gen generates the structure',
-              desc: 'Powered by Gemini AI, it understands your needs and creates the perfect folder structure.',
-              gradient: 'from-purple-500 to-pink-600',
-            },
-            {
-              icon: Rocket,
-              title: 'Start coding instantly',
-              desc: 'Jump straight into development with a complete, organized project structure ready to go.',
-              gradient: 'from-pink-500 to-red-600',
-            },
-          ].map((item, i) => (
-            <motion.div
-              key={i}
-              className='text-center group'
-              variants={scaleIn as Variants}
-            >
-              <motion.div
-                className={`w-16 h-16 bg-gradient-to-br ${item.gradient} rounded-2xl flex items-center justify-center mx-auto mb-6`}
-                whileHover={{ scale: 1.2, rotate: 5 }}
-                transition={{ type: 'spring', stiffness: 300 }}
-              >
-                <item.icon className='w-8 h-8 text-white' />
-              </motion.div>
-              <h3 className='text-xl font-semibold mb-3'>{item.title}</h3>
-              <p className='text-gray-400'>{item.desc}</p>
-            </motion.div>
-          ))}
-        </motion.div>
-      </Section>
-
-      {/* Features */}
-      <Section id='features' title='Built for Modern Developers'>
-        <motion.div
-          className='grid md:grid-cols-2 gap-6'
-          variants={staggerContainer}
-          initial='hidden'
-          whileInView='visible'
-          viewport={{ once: true, margin: '-100px' }}
-        >
-          {[
-            {
-              icon: Sparkles,
-              title: 'Gemini-Powered AI Understanding',
-              desc: 'Advanced natural language processing understands exactly what you need, from simple Apps to complex architectures.',
-              color: 'indigo',
-            },
-            {
-              icon: Zap,
-              title: 'Zero Dependencies',
-              desc: 'Single executable file. No npm installs, no Python environments, no hassle. Just download and run.',
-              color: 'purple',
-            },
-            {
-              icon: Layers,
-              title: 'Cross-Platform Support',
-              desc: 'Works seamlessly on Windows, macOS, and Linux. Write once, run anywhere.',
-              color: 'pink',
-              comingSoon: true,
-            },
-            {
-              icon: Terminal,
-              title: 'Instant JSON-to-Folder Conversion',
-              desc: 'Lightning-fast generation. From AI output to complete folder structure in milliseconds.',
-              color: 'cyan',
-            },
-          ].map((item, i) => (
-            <motion.div
-              key={i}
-              className={`relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-8 hover:border-${item.color}-500/50 transition-all group`}
-              variants={fadeInUp}
-              whileHover={{ y: -5, scale: 1.02 }}
-              transition={{ type: 'spring', stiffness: 300 }}
-            >
-              {item.comingSoon && (
-                <span className='absolute top-4 right-4 inline-flex items-center px-2 py-1 text-xs font-medium rounded-full bg-indigo-600 text-white shadow-sm'>
-                  Coming soon on Linux
-                </span>
-              )}
-              <motion.div
-                className={`w-12 h-12 bg-${item.color}-500/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-${item.color}-500/20 transition-colors`}
-                whileHover={{ rotate: 360 }}
-                transition={{ duration: 0.6 }}
-              >
-                <item.icon className={`w-6 h-6 text-${item.color}-400`} />
-              </motion.div>
-              <h3 className='text-2xl font-semibold mb-3'>{item.title}</h3>
-              <p className='text-gray-400'>{item.desc}</p>
-            </motion.div>
-          ))}
-        </motion.div>
-      </Section>
-
-      {/* Demo Section */}
-      <Section
-        id='demo'
-        title='See It In Action'
-        subtitle='Watch how AI-Gen transforms a simple description into a complete project structure'
-      >
-        <motion.div
-          className='max-w-4xl mx-auto bg-gray-900/80 backdrop-blur-xl border border-gray-800 rounded-2xl overflow-hidden'
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          whileHover={{ scale: 1.02 }}
-        >
-          <div className='bg-gray-800/50 px-4 py-3 flex items-center justify-between border-b border-gray-700/50'>
-            <span className='text-gray-400 text-sm font-mono'>example.sh</span>
-            <div className='flex gap-2'>
-              {[1, 2, 3].map((i) => (
-                <motion.div
-                  key={i}
-                  className='w-3 h-3 rounded-full bg-gray-600'
-                  whileHover={{ scale: 1.3, backgroundColor: '#9CA3AF' }}
-                />
-              ))}
-            </div>
-          </div>
-
-          <motion.div
-            className='p-6 font-mono text-sm space-y-3'
-            variants={staggerContainer}
-            initial='hidden'
-            whileInView='visible'
-            viewport={{ once: true }}
-          >
-            {[
-              {
-                text: '# Generate a Next.js blog with authentication',
-                color: 'gray-400',
-                prefix: '#',
-                prefixColor: 'gray-500',
-              },
-              {
-                text: 'ai-gen "Next.js blog with user auth and admin panel"',
-                color: 'blue-400',
-                prefix: '$',
-                prefixColor: 'green-400',
-              },
-              { text: '...', color: 'gray-500' },
-              {
-                text: '✓ Created project structure with 47 files',
-                color: 'green-400',
-              },
-            ].map((line, i) => (
-              <motion.div key={i} variants={fadeInUp}>
-                {line.prefix && (
-                  <span className={`text-${line.prefixColor}`}>
-                    {line.prefix}
-                  </span>
-                )}{' '}
-                <span className={`text-${line.color}`}>{line.text}</span>
-              </motion.div>
-            ))}
-            <motion.div className='pl-4 text-gray-400' variants={fadeInUp}>
-              {[
-                '├── App/',
-                '│   ├── (auth)/',
-                '│   ├── (admin)/',
-                '│   ├── blog/',
-                '│   └── api/',
-                '├── components/',
-                '├── lib/',
-                '└── public/',
-              ].map((folder, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: -10 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.05 }}
-                >
-                  {folder}
-                </motion.div>
-              ))}
-            </motion.div>
-          </motion.div>
-        </motion.div>
-      </Section>
-
-      {/* Download Section */}
-      <section className='relative z-10 max-w-7xl mx-auto px-6 py-20'>
-        <motion.div
-          className='bg-gradient-to-br from-indigo-500/10 to-purple-600/10 border border-indigo-500/20 rounded-3xl p-12 text-center'
-          initial={{ opacity: 0, scale: 0.9 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <motion.h2
-            className='text-4xl font-bold mb-4'
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            Ready to Transform Your Workflow?
-          </motion.h2>
-          <motion.p
-            className='text-gray-400 mb-8 max-w-2xl mx-auto'
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-          >
-            Join thousands of developers who are already building faster with AI
-          </motion.p>
-
-          <motion.div
-            className='flex flex-wrap justify-center gap-4 mb-8'
-            variants={staggerContainer}
-            initial='hidden'
-            whileInView='visible'
-            viewport={{ once: true }}
-          >
-            {['Windows', 'MacOS'].map((platform) => (
-              <motion.a
-                key={platform}
-                href='/exe/ai-gen.exe'
-                download
-                variants={scaleIn as Variants}
-                whileHover={{ scale: 1.05, y: -3 }}
-                whileTap={{ scale: 0.95 }}
-                className='bg-white text-gray-900 px-8 py-4 rounded-lg font-semibold flex items-center gap-2 transition-all shadow-lg cursor-pointer'
-              >
-                <Download className='w-5 h-5' />
-                {platform} (v1.0.0)
-              </motion.a>
-            ))}
-          </motion.div>
-
-          <motion.div
-            className='flex items-center justify-center gap-8 text-sm text-gray-400'
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-          >
-            {[
-              // '⭐ 12.4k stars on GitHub',
-              // '📦 50k+ downloads',
-              // '✓ MIT License',
-            ].map((stat, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.4 + i * 0.1 }}
-              >
-                {stat}
-              </motion.div>
-            ))}
-          </motion.div>
-        </motion.div>
-      </section>
-
-      {/* Footer */}
-      <motion.footer
-        className='relative z-10 border-t border-gray-800/50 mt-20'
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-      >
-        <div className='max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-4'>
-          <div className='text-gray-400'>AI-Gen — Built by Aneesh</div>
-          <div className='flex items-center gap-6'>
-            {[
-              {
-                icon: Github,
-                text: 'GitHub',
-                url: 'https://github.com/aneeshsharma72067',
-              },
-              // { icon: Twitter, text: 'Twitter', url: 'https://twitter.com' },
-              // { icon: FileText, text: 'Docs', url: '#' },
-            ].map((link, i) => (
-              <motion.a
-                key={link.text}
-                href={link.url}
-                className='text-gray-400 hover:text-gray-100 transition-colors flex items-center gap-2'
-                whileHover={{ scale: 1.1, y: -2 }}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <link.icon className='w-5 h-5' />
-                {link.text}
-              </motion.a>
-            ))}
-          </div>
-        </div>
-      </motion.footer>
-    </div>
-  );
-};
-
-// Reusable Section Component
-const Section = ({
-  children,
-  title,
-  subtitle,
-  id,
-}: {
-  children: React.ReactNode;
-  title: string;
-  subtitle?: string;
-  id?: string;
-}) => {
-  return (
-    <section id={id} className='relative z-10 max-w-7xl mx-auto px-6 py-20'>
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-100px' }}
-        transition={{ duration: 0.6 }}
-      >
-        <h2 className='text-4xl font-bold text-center mb-4'>{title}</h2>
-        {subtitle && (
-          <p className='text-gray-400 text-center mb-12 max-w-2xl mx-auto'>
-            {subtitle}
-          </p>
-        )}
-      </motion.div>
+    <span className="inline-flex items-center gap-2 rounded-full border border-blueprint/30 bg-blueprint/5 px-3 py-1 font-mono text-xs text-blueprint">
       {children}
+    </span>
+  )
+}
+
+function SectionTitle({ kicker, title }: { kicker: string; title: string }) {
+  return (
+    <div className="mb-12 text-center">
+      <p className="mb-3 font-mono text-xs uppercase tracking-[0.3em] text-blueprint-dim">
+        {kicker}
+      </p>
+      <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{title}</h2>
+    </div>
+  )
+}
+
+const fadeUp = {
+  initial: { opacity: 0, y: 24 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: '-80px' },
+  transition: { duration: 0.5 },
+}
+
+/* ---------- terminal demo ---------- */
+
+function TerminalDemo() {
+  return (
+    <div className="overflow-hidden rounded-xl border border-blueprint/20 bg-ink-2/80 shadow-2xl shadow-blueprint/10 backdrop-blur">
+      <div className="flex items-center gap-2 border-b border-blueprint/15 px-4 py-3">
+        <span className="h-3 w-3 rounded-full bg-red-400/70" />
+        <span className="h-3 w-3 rounded-full bg-yellow-400/70" />
+        <span className="h-3 w-3 rounded-full bg-green-400/70" />
+        <span className="ml-3 font-mono text-xs text-paper/40">bp — zsh</span>
+      </div>
+      <pre className="overflow-x-auto p-5 font-mono text-[13px] leading-relaxed">
+        <span className="text-blueprint">$ </span>
+        <span className="text-paper">bp gen </span>
+        <span className="text-green-300">"a Next.js 15 app with TypeScript + Tailwind"</span>
+        {'\n\n'}
+        <span className="text-paper/50">generating via claude...</span>
+        {'\n\n'}
+        <span className="font-bold text-paper">next-app</span>
+        {'\n'}
+        <span className="text-paper/60">Next.js 15 App Router, TS strict, Tailwind v4 wired.</span>
+        {'\n\n'}
+        <span className="font-bold text-paper">Files (7):</span>
+        {'\n'}
+        <span className="text-green-400">  + </span>package.json{'\n'}
+        <span className="text-green-400">  + </span>app/layout.tsx{'\n'}
+        <span className="text-green-400">  + </span>app/page.tsx{'\n'}
+        <span className="text-green-400">  + </span>app/globals.css{'\n'}
+        <span className="text-green-400">  + </span>tailwind.config.ts{'\n'}
+        <span className="text-green-400">  + </span>tsconfig.json{'\n'}
+        <span className="text-green-400">  + </span>next.config.mjs{'\n\n'}
+        <span className="font-bold text-paper">Commands (2):</span>
+        {'\n'}
+        <span className="text-cyan-400">  $ </span>npm install
+        <span className="text-paper/40">  # deps</span>
+        {'\n'}
+        <span className="text-cyan-400">  $ </span>git init
+        <span className="text-paper/40">  # version control</span>
+        {'\n\n'}
+        <span className="text-yellow-300">⚠ 2 shell command(s) will run on your machine.</span>
+        {'\n'}
+        <span className="text-paper">Apply this plan? [y/N] </span>
+        <span className="animate-pulse text-blueprint">▊</span>
+      </pre>
+    </div>
+  )
+}
+
+/* ---------- sections ---------- */
+
+function Nav() {
+  return (
+    <nav className="fixed inset-x-0 top-0 z-50 border-b border-blueprint/10 bg-ink/70 backdrop-blur-md">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+        <a href="#" className="flex items-center gap-2 font-mono font-bold">
+          <GitBranch className="text-blueprint" size={20} />
+          blueprint
+        </a>
+        <div className="hidden items-center gap-8 text-sm text-paper/70 sm:flex">
+          <a href="#how" className="transition hover:text-paper">How it works</a>
+          <a href="#features" className="transition hover:text-paper">Features</a>
+          <a href="#install" className="transition hover:text-paper">Install</a>
+        </div>
+        <a
+          href={GITHUB}
+          className="flex items-center gap-2 rounded-lg border border-blueprint/30 px-3 py-1.5 text-sm transition hover:bg-blueprint/10"
+        >
+          <Github size={16} /> Star
+        </a>
+      </div>
+    </nav>
+  )
+}
+
+function Hero() {
+  return (
+    <header className="relative overflow-hidden pt-32 pb-20">
+      <div className="grid-paper grid-fade absolute inset-0 -z-10" />
+      <div className="mx-auto max-w-6xl px-6">
+        <motion.div {...fadeUp} className="mx-auto mb-8 flex justify-center">
+          <Chip>
+            <Zap size={12} /> now written in Rust
+          </Chip>
+        </motion.div>
+        <motion.h1
+          {...fadeUp}
+          transition={{ duration: 0.5, delay: 0.05 }}
+          className="mx-auto max-w-4xl text-center text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl md:text-7xl"
+        >
+          One prompt to a{' '}
+          <span className="bg-gradient-to-r from-blueprint to-cyan-300 bg-clip-text text-transparent">
+            runnable project
+          </span>
+          .
+        </motion.h1>
+        <motion.p
+          {...fadeUp}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="mx-auto mt-6 max-w-2xl text-center text-lg text-paper/60"
+        >
+          blueprint plans your scaffold, shows you the diff, then applies it —
+          writing real starter code, installing deps, and wiring config that
+          actually agrees. Not empty folders. A project you can run.
+        </motion.p>
+        <motion.div
+          {...fadeUp}
+          transition={{ duration: 0.5, delay: 0.15 }}
+          className="mt-10 flex flex-wrap justify-center gap-4"
+        >
+          <a
+            href="#install"
+            className="rounded-lg bg-blueprint px-6 py-3 font-semibold text-ink transition hover:bg-cyan-300"
+          >
+            Install the CLI
+          </a>
+          <a
+            href={GITHUB}
+            className="flex items-center gap-2 rounded-lg border border-blueprint/30 px-6 py-3 font-semibold transition hover:bg-blueprint/10"
+          >
+            <Github size={18} /> View source
+          </a>
+        </motion.div>
+        <motion.div
+          {...fadeUp}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mx-auto mt-16 max-w-2xl"
+        >
+          <TerminalDemo />
+        </motion.div>
+      </div>
+    </header>
+  )
+}
+
+const STEPS = [
+  {
+    icon: Boxes,
+    step: '01',
+    title: 'Plan',
+    body: 'Describe what you want. blueprint asks the AI for a manifest — every file with real starter code, plus the commands to bring it to life.',
+  },
+  {
+    icon: Eye,
+    step: '02',
+    title: 'Preview',
+    body: 'See the whole plan before anything touches disk: a file tree marking what is new vs overwritten, and every command that will run.',
+  },
+  {
+    icon: PlayCircle,
+    step: '03',
+    title: 'Apply',
+    body: 'Confirm, and blueprint writes the files, installs dependencies, and runs setup. Re-run later to patch an existing project in place.',
+  },
+]
+
+function HowItWorks() {
+  return (
+    <section id="how" className="mx-auto max-w-6xl px-6 py-24">
+      <SectionTitle kicker="the flow" title="Plan → Preview → Apply" />
+      <div className="grid gap-6 md:grid-cols-3">
+        {STEPS.map((s, i) => (
+          <motion.div
+            key={s.step}
+            {...fadeUp}
+            transition={{ duration: 0.5, delay: i * 0.1 }}
+            className="group relative rounded-xl border border-blueprint/15 bg-ink-2/40 p-6 transition hover:border-blueprint/40"
+          >
+            <span className="font-mono text-5xl font-bold text-blueprint/15 transition group-hover:text-blueprint/30">
+              {s.step}
+            </span>
+            <s.icon className="my-4 text-blueprint" size={28} />
+            <h3 className="mb-2 text-xl font-semibold">{s.title}</h3>
+            <p className="text-sm leading-relaxed text-paper/60">{s.body}</p>
+          </motion.div>
+        ))}
+      </div>
     </section>
-  );
-};
+  )
+}
 
-export default App;
+const FEATURES = [
+  {
+    icon: Zap,
+    title: 'Rust-fast',
+    body: 'A single static binary. No runtime, no node_modules to boot the tool itself. Cold-start to plan in milliseconds.',
+  },
+  {
+    icon: RefreshCw,
+    title: 'Idempotent patches',
+    body: 'Run it in an existing repo — "add auth", "add Docker", "add CI" — and it extends what is there instead of clobbering it.',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Safe by design',
+    body: 'AI output is untrusted. Paths that escape the target are rejected; overwrites and shell commands need your explicit yes.',
+  },
+  {
+    icon: Terminal,
+    title: 'Bring your own key',
+    body: 'Claude, OpenAI, or Gemini — your key, your account, from an env var. No proxy in the middle, no per-call bill from us.',
+  },
+]
 
+function Features() {
+  return (
+    <section id="features" className="mx-auto max-w-6xl px-6 py-24">
+      <SectionTitle kicker="why blueprint" title="Built to be trusted with your disk" />
+      <div className="grid gap-6 sm:grid-cols-2">
+        {FEATURES.map((f, i) => (
+          <motion.div
+            key={f.title}
+            {...fadeUp}
+            transition={{ duration: 0.5, delay: i * 0.08 }}
+            className="flex gap-4 rounded-xl border border-blueprint/15 bg-ink-2/40 p-6"
+          >
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-blueprint/10 text-blueprint">
+              <f.icon size={22} />
+            </div>
+            <div>
+              <h3 className="mb-1 text-lg font-semibold">{f.title}</h3>
+              <p className="text-sm leading-relaxed text-paper/60">{f.body}</p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function Install() {
+  return (
+    <section id="install" className="relative overflow-hidden py-24">
+      <div className="grid-paper grid-fade absolute inset-0 -z-10 opacity-60" />
+      <div className="mx-auto max-w-3xl px-6">
+        <SectionTitle kicker="get started" title="Two commands to your first scaffold" />
+        <motion.div {...fadeUp} className="space-y-5">
+          <div>
+            <p className="mb-2 font-mono text-xs uppercase tracking-widest text-blueprint-dim">
+              1. install
+            </p>
+            <pre className="overflow-x-auto rounded-lg border border-blueprint/20 bg-ink-2/80 p-4 font-mono text-sm">
+              <span className="text-blueprint">$ </span>cargo install blueprint
+            </pre>
+          </div>
+          <div>
+            <p className="mb-2 font-mono text-xs uppercase tracking-widest text-blueprint-dim">
+              2. set your key
+            </p>
+            <pre className="overflow-x-auto rounded-lg border border-blueprint/20 bg-ink-2/80 p-4 font-mono text-sm">
+              <span className="text-blueprint">$ </span>export ANTHROPIC_API_KEY=sk-...
+            </pre>
+          </div>
+          <div>
+            <p className="mb-2 font-mono text-xs uppercase tracking-widest text-blueprint-dim">
+              3. build something
+            </p>
+            <pre className="overflow-x-auto rounded-lg border border-blueprint/20 bg-ink-2/80 p-4 font-mono text-sm">
+              <span className="text-blueprint">$ </span>bp gen{' '}
+              <span className="text-green-300">"a Rust CLI with clap and tests"</span>
+            </pre>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  )
+}
+
+function Footer() {
+  return (
+    <footer className="border-t border-blueprint/10 py-10">
+      <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-6 text-sm text-paper/50 sm:flex-row sm:justify-between">
+        <span className="flex items-center gap-2 font-mono">
+          <GitBranch size={16} className="text-blueprint" /> blueprint
+        </span>
+        <div className="flex gap-6">
+          <a href={GITHUB} className="transition hover:text-paper">GitHub</a>
+          <a href="https://x.com/aneeshdev03" className="transition hover:text-paper">Twitter</a>
+          <a href="https://linkedin.com/in/helloaneesh" className="transition hover:text-paper">LinkedIn</a>
+        </div>
+        <span>MIT · built by Aneesh</span>
+      </div>
+    </footer>
+  )
+}
+
+export default function App() {
+  return (
+    <div className="min-h-screen">
+      <Nav />
+      <Hero />
+      <HowItWorks />
+      <Features />
+      <Install />
+      <Footer />
+    </div>
+  )
+}
