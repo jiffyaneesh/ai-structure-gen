@@ -1,0 +1,3 @@
+- Commit after every unit of code change
+- Maintain a CHANGELOG.md
+- Write modular code and maintain folder structure
