@@ -29,8 +29,9 @@ bp gen "a Next.js 15 app with TypeScript and Tailwind"
 ## Quick start
 
 ```bash
-# 1. install
-cargo install blueprint          # provides the `bp` binary
+# 1. install (from source — not yet on crates.io)
+git clone https://github.com/jiffyaneesh/ai-structure-gen
+cd ai-structure-gen/cli && cargo install --path .   # provides the `bp` binary
 
 # 2. set your key (Claude is the default provider)
 export ANTHROPIC_API_KEY=sk-...

@@ -11,7 +11,7 @@ import {
   RefreshCw,
 } from 'lucide-react'
 
-const GITHUB = 'https://github.com/aneeshdev/blueprint'
+const GITHUB = 'https://github.com/jiffyaneesh/ai-structure-gen'
 
 /* ---------- small building blocks ---------- */
 
@@ -282,7 +282,9 @@ function Install() {
               1. install
             </p>
             <pre className="overflow-x-auto rounded-lg border border-blueprint/20 bg-ink-2/80 p-4 font-mono text-sm">
-              <span className="text-blueprint">$ </span>cargo install blueprint
+              <span className="text-blueprint">$ </span>git clone {GITHUB.replace('https://', '')}
+              {'\n'}
+              <span className="text-blueprint">$ </span>cd ai-structure-gen/cli && cargo install --path .
             </pre>
           </div>
           <div>
