@@ -1,328 +1,371 @@
-import { motion } from 'motion/react'
-import {
-  Terminal,
-  GitBranch,
-  ShieldCheck,
-  Boxes,
-  Eye,
-  PlayCircle,
-  Github,
-  Zap,
-  RefreshCw,
-} from 'lucide-react'
+import { useState } from 'react'
+import { motion, useReducedMotion } from 'motion/react'
+
+/*
+  The page is a permit application, not a brochure. blueprint's actual
+  subject is consent before mutation — the [y/N] pause where a plan
+  becomes a change on your disk — so the reader fills out the same form
+  the CLI walks them through, and signs it in section C.
+*/
 
 const GITHUB = 'https://github.com/jiffyaneesh/ai-structure-gen'
 
-/* ---------- small building blocks ---------- */
+/* ---------- form primitives ---------- */
 
-function Chip({ children }: { children: React.ReactNode }) {
+/** A boxed field with its caption printed above the rule, as on a real form. */
+function Field({
+  label,
+  children,
+  className = '',
+}: {
+  label: string
+  children: React.ReactNode
+  className?: string
+}) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-blueprint/30 bg-blueprint/5 px-3 py-1 font-mono text-xs text-blueprint">
-      {children}
-    </span>
-  )
-}
-
-function SectionTitle({ kicker, title }: { kicker: string; title: string }) {
-  return (
-    <div className="mb-12 text-center">
-      <p className="mb-3 font-mono text-xs uppercase tracking-[0.3em] text-blueprint-dim">
-        {kicker}
-      </p>
-      <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{title}</h2>
+    <div className={className}>
+      <p className="field-label mb-1">{label}</p>
+      <div className="field px-4 py-3">{children}</div>
     </div>
   )
 }
 
-const fadeUp = {
-  initial: { opacity: 0, y: 24 },
+/** Section rule: a letter in a box, the caption, then a hairline to the margin. */
+function SectionRule({ letter, title }: { letter: string; title: string }) {
+  return (
+    <div className="mb-8 flex items-center gap-3">
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center border border-carbon bg-carbon text-xs font-black text-stock">
+        {letter}
+      </span>
+      <h2 className="text-sm font-black uppercase tracking-[0.18em]">{title}</h2>
+      <span className="h-px flex-1 bg-carbon/35" />
+    </div>
+  )
+}
+
+const reveal = {
+  initial: { opacity: 0, y: 14 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: '-80px' },
-  transition: { duration: 0.5 },
-}
+  viewport: { once: true, margin: '-60px' },
+  transition: { duration: 0.4, ease: 'easeOut' },
+} as const
 
-/* ---------- terminal demo ---------- */
+/* ---------- masthead ---------- */
 
-function TerminalDemo() {
+function Masthead() {
   return (
-    <div className="overflow-hidden rounded-xl border border-blueprint/20 bg-ink-2/80 shadow-2xl shadow-blueprint/10 backdrop-blur">
-      <div className="flex items-center gap-2 border-b border-blueprint/15 px-4 py-3">
-        <span className="h-3 w-3 rounded-full bg-red-400/70" />
-        <span className="h-3 w-3 rounded-full bg-yellow-400/70" />
-        <span className="h-3 w-3 rounded-full bg-green-400/70" />
-        <span className="ml-3 font-mono text-xs text-paper/40">bp — zsh</span>
-      </div>
-      <pre className="overflow-x-auto p-5 font-mono text-[13px] leading-relaxed">
-        <span className="text-blueprint">$ </span>
-        <span className="text-paper">bp gen </span>
-        <span className="text-green-300">"a Next.js 15 app with TypeScript + Tailwind"</span>
-        {'\n\n'}
-        <span className="text-paper/50">generating via claude...</span>
-        {'\n\n'}
-        <span className="font-bold text-paper">next-app</span>
-        {'\n'}
-        <span className="text-paper/60">Next.js 15 App Router, TS strict, Tailwind v4 wired.</span>
-        {'\n\n'}
-        <span className="font-bold text-paper">Files (7):</span>
-        {'\n'}
-        <span className="text-green-400">  + </span>package.json{'\n'}
-        <span className="text-green-400">  + </span>app/layout.tsx{'\n'}
-        <span className="text-green-400">  + </span>app/page.tsx{'\n'}
-        <span className="text-green-400">  + </span>app/globals.css{'\n'}
-        <span className="text-green-400">  + </span>tailwind.config.ts{'\n'}
-        <span className="text-green-400">  + </span>tsconfig.json{'\n'}
-        <span className="text-green-400">  + </span>next.config.mjs{'\n\n'}
-        <span className="font-bold text-paper">Commands (2):</span>
-        {'\n'}
-        <span className="text-cyan-400">  $ </span>npm install
-        <span className="text-paper/40">  # deps</span>
-        {'\n'}
-        <span className="text-cyan-400">  $ </span>git init
-        <span className="text-paper/40">  # version control</span>
-        {'\n\n'}
-        <span className="text-yellow-300">⚠ 2 shell command(s) will run on your machine.</span>
-        {'\n'}
-        <span className="text-paper">Apply this plan? [y/N] </span>
-        <span className="animate-pulse text-blueprint">▊</span>
-      </pre>
-    </div>
-  )
-}
-
-/* ---------- sections ---------- */
-
-function Nav() {
-  return (
-    <nav className="fixed inset-x-0 top-0 z-50 border-b border-blueprint/10 bg-ink/70 backdrop-blur-md">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <a href="#" className="flex items-center gap-2 font-mono font-bold">
-          <GitBranch className="text-blueprint" size={20} />
-          blueprint
-        </a>
-        <div className="hidden items-center gap-8 text-sm text-paper/70 sm:flex">
-          <a href="#how" className="transition hover:text-paper">How it works</a>
-          <a href="#features" className="transition hover:text-paper">Features</a>
-          <a href="#install" className="transition hover:text-paper">Install</a>
-        </div>
-        <a
-          href={GITHUB}
-          className="flex items-center gap-2 rounded-lg border border-blueprint/30 px-3 py-1.5 text-sm transition hover:bg-blueprint/10"
-        >
-          <Github size={16} /> Star
-        </a>
-      </div>
-    </nav>
-  )
-}
-
-function Hero() {
-  return (
-    <header className="relative overflow-hidden pt-32 pb-20">
-      <div className="grid-paper grid-fade absolute inset-0 -z-10" />
-      <div className="mx-auto max-w-6xl px-6">
-        <motion.div {...fadeUp} className="mx-auto mb-8 flex justify-center">
-          <Chip>
-            <Zap size={12} /> now written in Rust
-          </Chip>
-        </motion.div>
-        <motion.h1
-          {...fadeUp}
-          transition={{ duration: 0.5, delay: 0.05 }}
-          className="mx-auto max-w-4xl text-center text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl md:text-7xl"
-        >
-          One prompt to a{' '}
-          <span className="bg-gradient-to-r from-blueprint to-cyan-300 bg-clip-text text-transparent">
-            runnable project
-          </span>
-          .
-        </motion.h1>
-        <motion.p
-          {...fadeUp}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="mx-auto mt-6 max-w-2xl text-center text-lg text-paper/60"
-        >
-          blueprint plans your scaffold, shows you the diff, then applies it —
-          writing real starter code, installing deps, and wiring config that
-          actually agrees. Not empty folders. A project you can run.
-        </motion.p>
-        <motion.div
-          {...fadeUp}
-          transition={{ duration: 0.5, delay: 0.15 }}
-          className="mt-10 flex flex-wrap justify-center gap-4"
-        >
-          <a
-            href="#install"
-            className="rounded-lg bg-blueprint px-6 py-3 font-semibold text-ink transition hover:bg-cyan-300"
-          >
-            Install the CLI
-          </a>
+    <header className="border-b-2 border-carbon">
+      <div className="mx-auto max-w-5xl px-6 pt-10 pb-6">
+        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-carbon/30 pb-3">
+          <p className="typed text-[11px] uppercase tracking-widest text-ink">
+            Form BP-1 · Application to modify a working directory
+          </p>
           <a
             href={GITHUB}
-            className="flex items-center gap-2 rounded-lg border border-blueprint/30 px-6 py-3 font-semibold transition hover:bg-blueprint/10"
+            className="typed text-[11px] uppercase tracking-widest text-ink underline decoration-dotted underline-offset-4 hover:text-stamp"
           >
-            <Github size={18} /> View source
+            Source ↗
           </a>
-        </motion.div>
-        <motion.div
-          {...fadeUp}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mx-auto mt-16 max-w-2xl"
-        >
-          <TerminalDemo />
-        </motion.div>
+        </div>
+
+        <h1 className="mt-6 text-[15vw] leading-[0.82] font-black uppercase tracking-tighter sm:text-[8.5rem]">
+          blueprint
+        </h1>
+
+        <div className="mt-6 grid gap-x-8 gap-y-4 border-t border-carbon/30 pt-5 sm:grid-cols-[1.6fr_1fr]">
+          <p className="max-w-lg text-lg leading-snug">
+            One sentence in. A project you can actually run out — real code,
+            dependencies installed, config that agrees with itself.
+          </p>
+          <dl className="typed space-y-1 text-xs">
+            <div className="flex justify-between border-b border-carbon/20 pb-1">
+              <dt className="text-ink">Issued in</dt>
+              <dd>Rust · one static binary</dd>
+            </div>
+            <div className="flex justify-between border-b border-carbon/20 pb-1">
+              <dt className="text-ink">Weight</dt>
+              <dd>2.8 MB</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-ink">Writes without asking</dt>
+              <dd className="font-bold text-stamp">Never</dd>
+            </div>
+          </dl>
+        </div>
       </div>
     </header>
   )
 }
 
-const STEPS = [
-  {
-    icon: Boxes,
-    step: '01',
-    title: 'Plan',
-    body: 'Describe what you want. blueprint asks the AI for a manifest — every file with real starter code, plus the commands to bring it to life.',
-  },
-  {
-    icon: Eye,
-    step: '02',
-    title: 'Preview',
-    body: 'See the whole plan before anything touches disk: a file tree marking what is new vs overwritten, and every command that will run.',
-  },
-  {
-    icon: PlayCircle,
-    step: '03',
-    title: 'Apply',
-    body: 'Confirm, and blueprint writes the files, installs dependencies, and runs setup. Re-run later to patch an existing project in place.',
-  },
-]
+/* ---------- §A: what you're asking for ---------- */
 
-function HowItWorks() {
+function SectionA() {
   return (
-    <section id="how" className="mx-auto max-w-6xl px-6 py-24">
-      <SectionTitle kicker="the flow" title="Plan → Preview → Apply" />
-      <div className="grid gap-6 md:grid-cols-3">
-        {STEPS.map((s, i) => (
-          <motion.div
-            key={s.step}
-            {...fadeUp}
-            transition={{ duration: 0.5, delay: i * 0.1 }}
-            className="group relative rounded-xl border border-blueprint/15 bg-ink-2/40 p-6 transition hover:border-blueprint/40"
-          >
-            <span className="font-mono text-5xl font-bold text-blueprint/15 transition group-hover:text-blueprint/30">
-              {s.step}
+    <section className="mx-auto max-w-5xl px-6 py-16">
+      <SectionRule letter="A" title="Description of proposed works" />
+      <motion.div {...reveal} className="grid gap-5 sm:grid-cols-[2fr_1fr]">
+        <Field label="Applicant's request — in plain language">
+          <p className="typed text-base leading-relaxed sm:text-lg">
+            <span className="text-ink-soft">$ </span>bp gen{' '}
+            <span className="bg-ink/10 px-1">
+              "a Next.js 15 app with TypeScript and Tailwind"
             </span>
-            <s.icon className="my-4 text-blueprint" size={28} />
-            <h3 className="mb-2 text-xl font-semibold">{s.title}</h3>
-            <p className="text-sm leading-relaxed text-paper/60">{s.body}</p>
-          </motion.div>
-        ))}
-      </div>
+            <span className="ml-0.5 inline-block w-2 animate-pulse bg-carbon align-text-bottom">
+              &nbsp;
+            </span>
+          </p>
+        </Field>
+        <Field label="Site">
+          <p className="typed text-base">./my-app</p>
+          <p className="typed mt-1 text-xs text-ink-soft">
+            existing directory · will be surveyed first
+          </p>
+        </Field>
+      </motion.div>
+      <motion.p {...reveal} className="typed mt-4 text-xs leading-relaxed text-ink">
+        Filed with an existing project, blueprint reads what is already standing
+        before it drafts. "Add Docker" extends the site; it does not level it.
+      </motion.p>
     </section>
   )
 }
 
-const FEATURES = [
-  {
-    icon: Zap,
-    title: 'Rust-fast',
-    body: 'A single static binary. No runtime, no node_modules to boot the tool itself. Cold-start to plan in milliseconds.',
-  },
-  {
-    icon: RefreshCw,
-    title: 'Idempotent patches',
-    body: 'Run it in an existing repo — "add auth", "add Docker", "add CI" — and it extends what is there instead of clobbering it.',
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Safe by design',
-    body: 'AI output is untrusted. Paths that escape the target are rejected; overwrites and shell commands need your explicit yes.',
-  },
-  {
-    icon: Terminal,
-    title: 'Bring your own key',
-    body: 'Claude, OpenAI, Groq, or Gemini — your key, your account, from an env var. No proxy in the middle, no per-call bill from us.',
-  },
-]
+/* ---------- §B: the schedule — the manifest as a bill of works ---------- */
 
-function Features() {
+const WORKS = [
+  { qty: '1', item: 'package.json', note: 'deps pinned', state: 'new' },
+  { qty: '1', item: 'app/layout.tsx', note: 'root shell', state: 'new' },
+  { qty: '1', item: 'app/page.tsx', note: 'entry view', state: 'new' },
+  { qty: '1', item: 'app/globals.css', note: 'tailwind directives', state: 'new' },
+  { qty: '1', item: 'tsconfig.json', note: 'strict', state: 'amend' },
+  { qty: '1', item: 'next.config.mjs', note: '—', state: 'new' },
+] as const
+
+const ORDERS = [
+  { run: 'npm install', why: 'fetch declared dependencies' },
+  { run: 'git init', why: 'place under version control' },
+] as const
+
+function SectionB() {
   return (
-    <section id="features" className="mx-auto max-w-6xl px-6 py-24">
-      <SectionTitle kicker="why blueprint" title="Built to be trusted with your disk" />
-      <div className="grid gap-6 sm:grid-cols-2">
-        {FEATURES.map((f, i) => (
-          <motion.div
-            key={f.title}
-            {...fadeUp}
-            transition={{ duration: 0.5, delay: i * 0.08 }}
-            className="flex gap-4 rounded-xl border border-blueprint/15 bg-ink-2/40 p-6"
-          >
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-blueprint/10 text-blueprint">
-              <f.icon size={22} />
-            </div>
-            <div>
-              <h3 className="mb-1 text-lg font-semibold">{f.title}</h3>
-              <p className="text-sm leading-relaxed text-paper/60">{f.body}</p>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+    <section className="mx-auto max-w-5xl px-6 py-16">
+      <SectionRule letter="B" title="Schedule of works — for review before signature" />
+
+      <motion.div {...reveal} className="field">
+        <table className="w-full text-left">
+          <thead>
+            <tr className="border-b border-ink/40 bg-ink/5">
+              <th className="field-label px-4 py-2 w-12">Qty</th>
+              <th className="field-label px-4 py-2">Item to be placed on site</th>
+              <th className="field-label hidden px-4 py-2 sm:table-cell">Particulars</th>
+              <th className="field-label px-4 py-2 text-right">Disposition</th>
+            </tr>
+          </thead>
+          <tbody className="typed text-sm">
+            {WORKS.map((w) => (
+              <tr key={w.item} className="border-b border-ink/15 last:border-0">
+                <td className="px-4 py-2 text-ink-soft">{w.qty}</td>
+                <td className="px-4 py-2">{w.item}</td>
+                <td className="hidden px-4 py-2 text-ink-soft sm:table-cell">{w.note}</td>
+                <td className="px-4 py-2 text-right">
+                  {w.state === 'new' ? (
+                    <span className="text-ink">new</span>
+                  ) : (
+                    <span className="font-bold text-stamp">overwrites</span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </motion.div>
+
+      <motion.div {...reveal} className="mt-5 grid gap-5 sm:grid-cols-[1.4fr_1fr]">
+        <Field label="Orders to be executed on your machine">
+          <ul className="typed space-y-1.5 text-sm">
+            {ORDERS.map((o) => (
+              <li key={o.run} className="flex flex-wrap gap-x-3">
+                <span className="text-ink-soft">$</span>
+                <span>{o.run}</span>
+                <span className="text-ink-soft">— {o.why}</span>
+              </li>
+            ))}
+          </ul>
+        </Field>
+        <Field label="Nothing has been written yet">
+          <p className="typed text-sm leading-relaxed">
+            This schedule is the whole of it. Run{' '}
+            <span className="bg-ink/10 px-1">--dry-run</span> and it is all you
+            ever get.
+          </p>
+        </Field>
+      </motion.div>
     </section>
   )
 }
 
-function Install() {
+/* ---------- §C: the signature. the page's one bold moment ---------- */
+
+function SectionC() {
+  const [signed, setSigned] = useState(false)
+  const reduced = useReducedMotion()
+
   return (
-    <section id="install" className="relative overflow-hidden py-24">
-      <div className="grid-paper grid-fade absolute inset-0 -z-10 opacity-60" />
-      <div className="mx-auto max-w-3xl px-6">
-        <SectionTitle kicker="get started" title="Two commands to your first scaffold" />
-        <motion.div {...fadeUp} className="space-y-5">
+    <section className="border-y-2 border-carbon bg-stock-2/60">
+      <div className="mx-auto max-w-5xl px-6 py-16">
+        <SectionRule letter="C" title="Authorization — required before any write" />
+
+        <div className="grid gap-8 md:grid-cols-[1.15fr_1fr]">
           <div>
-            <p className="mb-2 font-mono text-xs uppercase tracking-widest text-blueprint-dim">
-              1. install
+            <p className="max-w-md text-2xl leading-tight font-semibold">
+              A tool that writes files and runs shell commands should have to ask
+              first. This one does, every time.
             </p>
-            <pre className="overflow-x-auto rounded-lg border border-blueprint/20 bg-ink-2/80 p-4 font-mono text-sm">
-              <span className="text-blueprint">$ </span>git clone {GITHUB.replace('https://', '')}
+            <p className="typed mt-4 max-w-md text-sm leading-relaxed text-ink">
+              Paths that reach outside your target directory are refused before
+              they reach disk. Overwrites and commands are counted out loud. The
+              default answer is no.
+            </p>
+
+            <button
+              type="button"
+              onClick={() => setSigned((s) => !s)}
+              aria-pressed={signed}
+              className="typed mt-7 flex items-start gap-3 text-left"
+            >
+              <span
+                aria-hidden
+                className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center border-2 border-carbon bg-stock text-lg leading-none"
+              >
+                {signed ? '✕' : ''}
+              </span>
+              <span className="text-sm leading-snug">
+                I have read the schedule above and authorize these works.
+                <span className="mt-0.5 block text-xs text-ink-soft">
+                  {signed ? 'Authorized — see stamp.' : 'Tick to sign.'}
+                </span>
+              </span>
+            </button>
+          </div>
+
+          <div className="relative flex min-h-[210px] items-center justify-center">
+            <div className="field h-full w-full" />
+            <p className="field-label absolute top-3 left-4">Official use only</p>
+
+            {signed ? (
+              <motion.div
+                key="stamp"
+                className={`stamp absolute px-6 py-3 text-center ${reduced ? '' : 'stamp-hit'}`}
+                style={{ transform: 'rotate(-14deg)' }}
+              >
+                <span className="block text-2xl leading-none sm:text-3xl">Approved</span>
+                <span className="typed mt-1 block text-[10px] tracking-normal">
+                  writes permitted · this run only
+                </span>
+              </motion.div>
+            ) : (
+              <p className="typed absolute px-8 text-center text-sm text-ink-soft">
+                Unsigned. No files written, no commands run.
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ---------- §D: how to file one yourself ---------- */
+
+const KEYS = [
+  ['claude', 'ANTHROPIC_API_KEY', 'default'],
+  ['openai', 'OPENAI_API_KEY', ''],
+  ['groq', 'GROQ_API_KEY', ''],
+  ['gemini', 'GEMINI_API_KEY', ''],
+] as const
+
+function SectionD() {
+  return (
+    <section className="mx-auto max-w-5xl px-6 py-16">
+      <SectionRule letter="D" title="How to file your own" />
+
+      <div className="grid gap-5 md:grid-cols-[1.3fr_1fr]">
+        <motion.div {...reveal}>
+          <Field label="Obtain the binary">
+            <pre className="typed overflow-x-auto text-sm leading-relaxed">
+              <span className="text-ink-soft">$ </span>git clone{' '}
+              {GITHUB.replace('https://', '')}
               {'\n'}
-              <span className="text-blueprint">$ </span>cd ai-structure-gen/cli && cargo install --path .
+              <span className="text-ink-soft">$ </span>cd ai-structure-gen/cli && cargo
+              install --path .
             </pre>
-          </div>
-          <div>
-            <p className="mb-2 font-mono text-xs uppercase tracking-widest text-blueprint-dim">
-              2. set your key
-            </p>
-            <pre className="overflow-x-auto rounded-lg border border-blueprint/20 bg-ink-2/80 p-4 font-mono text-sm">
-              <span className="text-blueprint">$ </span>export ANTHROPIC_API_KEY=sk-...
+          </Field>
+          <p className="typed mt-2 text-xs text-ink-soft">
+            Not yet on crates.io. Built from source until it is.
+          </p>
+
+          <Field label="File an application" className="mt-5">
+            <pre className="typed overflow-x-auto text-sm leading-relaxed">
+              <span className="text-ink-soft">$ </span>export GROQ_API_KEY=...
+              {'\n'}
+              <span className="text-ink-soft">$ </span>bp gen{' '}
+              <span className="bg-ink/10 px-1">"a Rust CLI with clap and tests"</span>
             </pre>
-          </div>
-          <div>
-            <p className="mb-2 font-mono text-xs uppercase tracking-widest text-blueprint-dim">
-              3. build something
-            </p>
-            <pre className="overflow-x-auto rounded-lg border border-blueprint/20 bg-ink-2/80 p-4 font-mono text-sm">
-              <span className="text-blueprint">$ </span>bp gen{' '}
-              <span className="text-green-300">"a Rust CLI with clap and tests"</span>
-            </pre>
-          </div>
+          </Field>
+        </motion.div>
+
+        <motion.div {...reveal}>
+          <Field label="Accepted authorities — your key, your account">
+            <table className="typed w-full text-left text-xs">
+              <tbody>
+                {KEYS.map(([flag, env, tag]) => (
+                  <tr key={flag} className="border-b border-ink/15 last:border-0">
+                    <td className="py-1.5 pr-3">-p {flag}</td>
+                    <td className="py-1.5 text-ink-soft">{env}</td>
+                    <td className="py-1.5 text-right">
+                      {tag && <span className="text-stamp">{tag}</span>}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Field>
+          <p className="typed mt-2 text-xs leading-relaxed text-ink-soft">
+            No proxy in the middle. Requests go from your machine to the provider
+            you named, and nowhere else.
+          </p>
         </motion.div>
       </div>
     </section>
   )
 }
 
-function Footer() {
+/* ---------- footer: the tear-off stub ---------- */
+
+function Stub() {
   return (
-    <footer className="border-t border-blueprint/10 py-10">
-      <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-6 text-sm text-paper/50 sm:flex-row sm:justify-between">
-        <span className="flex items-center gap-2 font-mono">
-          <GitBranch size={16} className="text-blueprint" /> blueprint
-        </span>
-        <div className="flex gap-6">
-          <a href={GITHUB} className="transition hover:text-paper">GitHub</a>
-          <a href="https://x.com/aneeshdev03" className="transition hover:text-paper">Twitter</a>
-          <a href="https://linkedin.com/in/helloaneesh" className="transition hover:text-paper">LinkedIn</a>
-        </div>
-        <span>MIT · built by Aneesh</span>
+    <footer className="border-t-2 border-dashed border-carbon/50">
+      <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-7">
+        <p className="typed text-[11px] uppercase tracking-widest text-ink">
+          Retain this portion · MIT · built by Aneesh
+        </p>
+        <nav className="typed flex gap-5 text-[11px] uppercase tracking-widest">
+          <a href={GITHUB} className="underline decoration-dotted underline-offset-4 hover:text-stamp">
+            GitHub
+          </a>
+          <a
+            href="https://x.com/aneeshdev03"
+            className="underline decoration-dotted underline-offset-4 hover:text-stamp"
+          >
+            Twitter
+          </a>
+          <a
+            href="https://linkedin.com/in/helloaneesh"
+            className="underline decoration-dotted underline-offset-4 hover:text-stamp"
+          >
+            LinkedIn
+          </a>
+        </nav>
       </div>
     </footer>
   )
@@ -330,13 +373,13 @@ function Footer() {
 
 export default function App() {
   return (
-    <div className="min-h-screen">
-      <Nav />
-      <Hero />
-      <HowItWorks />
-      <Features />
-      <Install />
-      <Footer />
+    <div className="stock min-h-screen">
+      <Masthead />
+      <SectionA />
+      <SectionB />
+      <SectionC />
+      <SectionD />
+      <Stub />
     </div>
   )
 }
