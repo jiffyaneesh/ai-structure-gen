@@ -13,7 +13,7 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Added
 - Rust CLI (`bp gen`) with:
-  - Multi-provider BYOK support — Claude (default), OpenAI, Gemini — keys from env.
+  - Multi-provider BYOK support — Claude (default), OpenAI, Groq, Gemini — keys from env.
   - Manifest schema (files + commands) as the AI↔apply contract, with path-escape validation.
   - Dry-run preview showing new/overwrite file markers and commands before touching disk.
   - Apply engine that writes files and runs setup commands in the target dir.

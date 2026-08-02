@@ -3,7 +3,7 @@
 
 mod claude;
 mod gemini;
-mod openai;
+mod openai_compat;
 
 use crate::manifest::Manifest;
 use anyhow::{Context, Result};
@@ -18,9 +18,10 @@ pub trait Provider {
 pub fn resolve(name: &str) -> Result<Box<dyn Provider>> {
     match name {
         "claude" | "anthropic" => Ok(Box::new(claude::Claude::from_env()?)),
-        "openai" | "gpt" => Ok(Box::new(openai::OpenAi::from_env()?)),
+        "openai" | "gpt" => Ok(Box::new(openai_compat::OpenAiCompat::openai()?)),
+        "groq" => Ok(Box::new(openai_compat::OpenAiCompat::groq()?)),
         "gemini" | "google" => Ok(Box::new(gemini::Gemini::from_env()?)),
-        other => anyhow::bail!("unknown provider '{other}' (use: claude, openai, gemini)"),
+        other => anyhow::bail!("unknown provider '{other}' (use: claude, openai, groq, gemini)"),
     }
 }
 

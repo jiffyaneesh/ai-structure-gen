@@ -240,7 +240,7 @@ const FEATURES = [
   {
     icon: Terminal,
     title: 'Bring your own key',
-    body: 'Claude, OpenAI, or Gemini — your key, your account, from an env var. No proxy in the middle, no per-call bill from us.',
+    body: 'Claude, OpenAI, Groq, or Gemini — your key, your account, from an env var. No proxy in the middle, no per-call bill from us.',
   },
 ]
 

@@ -27,7 +27,7 @@ enum Cmd {
         /// Target directory (created if missing). Defaults to current dir.
         #[arg(short, long, default_value = ".")]
         dir: PathBuf,
-        /// AI provider: claude (default), openai, gemini.
+        /// AI provider: claude (default), openai, groq, gemini.
         #[arg(short, long, default_value = "claude")]
         provider: String,
         /// Show the plan and exit without writing anything.

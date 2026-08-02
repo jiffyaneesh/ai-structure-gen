@@ -46,7 +46,7 @@ bp gen "a Rust CLI with clap and tests"
 bp gen "<prompt>" [OPTIONS]
 
   -d, --dir <DIR>            Target directory (created if missing) [default: .]
-  -p, --provider <NAME>      claude (default) | openai | gemini
+  -p, --provider <NAME>      claude (default) | openai | groq | gemini
       --dry-run              Show the plan and exit, write nothing
   -y, --yes                  Apply without the confirmation prompt
       --no-commands          Write files only, skip running commands
@@ -62,6 +62,7 @@ Bring your own key — blueprint calls the provider directly, no proxy in the mi
 | -------- | ---------------- | ------------------- |
 | Claude   | `-p claude` (default) | `ANTHROPIC_API_KEY` |
 | OpenAI   | `-p openai`      | `OPENAI_API_KEY`    |
+| Groq     | `-p groq`        | `GROQ_API_KEY`      |
 | Gemini   | `-p gemini`      | `GEMINI_API_KEY`    |
 
 ---
@@ -84,7 +85,7 @@ AI output is treated as untrusted input:
 │   └── src/
 │       ├── main.rs        # clap entrypoint, plan→preview→apply flow
 │       ├── manifest.rs    # AI↔apply contract + path validation
-│       ├── provider/      # claude | openai | gemini (BYOK)
+│       ├── provider/      # claude | openai | groq | gemini (BYOK)
 │       ├── context.rs     # existing-project snapshot for idempotent re-runs
 │       ├── preview.rs     # human-reviewable plan rendering
 │       └── apply.rs       # write files + run commands
