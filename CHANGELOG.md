@@ -20,6 +20,11 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com).
   - Existing-project snapshot so re-runs patch idempotently instead of clobbering.
   - Confirmation prompts for overwrites and command execution.
 
+### Fixed
+- Vercel deployment failing with `vite: command not found`. Added root `vercel.json`
+  pointing install/build/output at the `web/` workspace, since the repo root has no
+  `package.json` of its own.
+
 ### Removed
 - Legacy Python CLI (source lost) and its prebuilt `ai-gen` executables.
 - Hosted-backend Gemini proxy model (replaced by BYOK; backend can slot in later as a provider).
